@@ -93,7 +93,7 @@ def show_loss_acc(history):
 def train(epochs):
     # 开始训练，记录开始时间
     begin_time = time()
-    train_ds, val_ds, class_names = data_load("../fruit/train",
+    train_ds, val_ds, class_names = data_load("../../fruit/train",
                                               "../fruit/val", 224, 224, 16)
     print(class_names)
     # 加载模型

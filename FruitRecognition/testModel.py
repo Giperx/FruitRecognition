@@ -35,7 +35,7 @@ def data_load(data_dir, test_data_dir, img_height, img_width, batch_size):
 
 # 测试mobilenet准确率
 def test_mobilenet():
-    train_ds, test_ds, class_names = data_load("../fruit/train",
+    train_ds, test_ds, class_names = data_load("../../fruit/train",
                                               "../fruit/val", 224, 224, 16)
     model = tf.keras.models.load_model("models/mobilenet_fv.h5")
     # model.summary()
@@ -89,7 +89,7 @@ def test_mobilenet():
 
 # 测试cnn模型准确率
 def test_cnn():
-    train_ds, test_ds, class_names = data_load("../fruit/train",
+    train_ds, test_ds, class_names = data_load("../../fruit/train",
                                               "../fruit/val", 224, 224, 16)
     model = tf.keras.models.load_model("models/cnn_fv.h5")
     # model.summary()
