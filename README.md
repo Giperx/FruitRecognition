@@ -218,6 +218,14 @@ def show_loss_acc(history)
 
 ![](FruitRecognition/resultsPng/heatmap_cnn4.png)
 
+&emsp;尝试调整CNN网络结构。
+
+![](PhotoForReadme/12.png)
+
+&emsp;首尾增加2个卷积层池化层，Flatten展开一维后增加1个全连接层，训练70轮，使用sgd优化器和多分类交叉熵损失函数，效果不理想。
+
+![](PhotoForReadme/13.png)
+
 &emsp;排查原因，首要原因是数据集的问题，对于像荔枝的数据集，在我们这个模型中预测出来的草莓的概率反而比荔枝更高。查看数据集图片发现这个数据集样本量不够大，荔枝只有156张图片，而且有剥开皮的、还没熟透绿色的、照片调色过艳的，类型过杂图片过少造成预测准确率低。
 
 ![](PhotoForReadme/10.png)
