@@ -133,7 +133,7 @@ def model_load(IMG_SHAPE=(223, 224, 3), class_num=15):
 
 &emsp;而MobileNetV2相较于V1的改进，是使用了反向线性残差结构。
 
-![](PhotoForReadme/6.png)
+![](PhotoForReadme/11.png)
 
 &emsp;先采用了1 * 1卷积进行了升维，然后采用3 * 3深度可分离卷积进行特征提取，最后用1 * 1卷积进行降维，降维时不采用激活函数。V2比V1的参数量和计算量会更小、准确率会更高。
 模型定义函数如下：
