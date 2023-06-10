@@ -7,6 +7,8 @@ import tensorflow as tf
 import matplotlib.pyplot as plt
 from time import *
 import os
+from tensorflow import keras
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 # 数据集加载函数，指明数据集的位置并统一处理为imgheight*imgwidth的大小，同时设置batch
 def data_load(data_dir, test_data_dir, img_height, img_width, batch_size):
@@ -28,32 +30,63 @@ def data_load(data_dir, test_data_dir, img_height, img_width, batch_size):
     # 返回处理之后的训练集、验证集和类名
     return train_ds, val_ds, class_names
 
+# def data_load(data_dir, test_data_dir, img_height, img_width, batch_size):
+#     # 数据增强
+#     train_datagen = ImageDataGenerator(
+#         rotation_range=40,
+#         width_shift_range=0.2,
+#         height_shift_range=0.2,
+#         shear_range=0.2,
+#         zoom_range=0.2,
+#         horizontal_flip=True,
+#         fill_mode='nearest')
+#
+#     # 加载训练集
+#     train_ds = train_datagen.flow_from_directory(
+#         data_dir,
+#         target_size=(img_height, img_width),
+#         batch_size=batch_size,
+#         seed=123,
+#         class_mode='categorical')
+#
+#     # 加载测试集
+#     val_ds = tf.keras.preprocessing.image_dataset_from_directory(
+#         test_data_dir,
+#         label_mode='categorical',
+#         seed=123,
+#         image_size=(img_height, img_width),
+#         batch_size=batch_size)
+#     class_names = val_ds.class_names
+#
+#     # 返回处理之后的训练集、验证集和类名
+#     return train_ds, val_ds, class_names
+
 
 # 构建CNN模型
 def model_load(IMG_SHAPE=(224, 224, 3), class_num=15):
     # 搭建模型
     model = tf.keras.models.Sequential([
-        # 对模型做归一化的处理，将0-255之间的数字统一处理到0到1之间
+        # 对模型做归一化
         tf.keras.layers.experimental.preprocessing.Rescaling(1. / 255, input_shape=IMG_SHAPE),
-        # tf.keras.layers.Conv2D(16, (3, 3), activation='relu'),
-        # tf.keras.layers.MaxPooling2D(2, 2),
-        # 卷积层，该卷积层的输出为32个通道，卷积核的大小是3*3，激活函数为relu
+        # 卷积层，该卷积层的输出为16
+        tf.keras.layers.Conv2D(16, (3, 3), activation='relu'),
+        tf.keras.layers.MaxPooling2D(2, 2),
+        # 卷积层，该卷积层的输出为32
         tf.keras.layers.Conv2D(32, (3, 3), activation='relu'),
-        # 添加池化层，池化的kernel大小是2*2
+        # 添加池化层
         tf.keras.layers.MaxPooling2D(2, 2),
         # Add another convolution
-        # 卷积层，输出为64个通道，卷积核大小为3*3，激活函数为relu
+        # 卷积层，输出为64
         tf.keras.layers.Conv2D(64, (3, 3), activation='relu'),
-        # 池化层，最大池化，对2*2的区域进行池化操作
+        # 池化层
         tf.keras.layers.MaxPooling2D(2, 2),
         # tf.keras.layers.Conv2D(128, (3, 3), activation='relu'),
         # tf.keras.layers.MaxPooling2D(2, 2),
-        # 将二维的输出转化为一维
+        # 转化为一维
         tf.keras.layers.Flatten(),
-        # The same 128 dense layers, and 10 output layers as in the pre-convolution example:
         # tf.keras.layers.Dense(256, activation='relu'),
         tf.keras.layers.Dense(128, activation='relu'),
-        # 通过softmax函数将模型输出为类名长度的神经元上，激活函数采用softmax对应概率值
+
         tf.keras.layers.Dense(class_num, activation='softmax')
     ])
     # 输出模型信息
@@ -67,14 +100,12 @@ def model_load(IMG_SHAPE=(224, 224, 3), class_num=15):
 
 
 # 展示训练过程的曲线
-def show_loss_acc(history):
-    # 从history中提取模型训练集和验证集准确率信息和误差信息
+def showAccuracyAndLoss(history):
     acc = history.history['accuracy']
     val_acc = history.history['val_accuracy']
     loss = history.history['loss']
     val_loss = history.history['val_loss']
 
-    # 按照上下结构将图画输出
     plt.figure(figsize=(8, 8))
     plt.subplot(2, 1, 1)
     plt.plot(acc, label='Training Accuracy')
@@ -102,10 +133,12 @@ def show_loss_acc(history):
 
 
 def train(epochs):
-    # 开始训练，记录开始时间
+    # 开始训练
     begin_time = time()
 
-    train_ds, val_ds, class_names = data_load("../../fruit/train",
+    # train_ds, val_ds, class_names = data_load("../fruit/train",
+    #                                           "../fruit/val", 224, 224, 16)
+    train_ds, val_ds, class_names = data_load("../geneFruit/train",
                                               "../fruit/val", 224, 224, 16)
     print(class_names)
     # 加载模型
@@ -116,10 +149,10 @@ def train(epochs):
     # 记录结束时间
     end_time = time()
     run_time = end_time - begin_time
-    print('该循环程序运行时间：', run_time, "s")  # 该循环程序运行时间： 1.4201874732
+    print('该循环程序运行时间：', run_time, "s")
     # 绘制模型训练过程图
-    show_loss_acc(history)
+    showAccuracyAndLoss(history)
 
 
 if __name__ == '__main__':
-    train(epochs=25)
+    train(epochs=15)

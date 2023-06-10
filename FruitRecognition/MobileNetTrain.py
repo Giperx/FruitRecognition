@@ -56,7 +56,7 @@ def model_load(IMG_SHAPE=(224, 224, 3), class_num=15):
 
 
 # 展示训练过程的曲线
-def show_loss_acc(history):
+def showAccuracyAndLoss(history):
     # 从history中提取模型训练集和验证集准确率信息和误差信息
     acc = history.history['accuracy']
     val_acc = history.history['val_accuracy']
@@ -91,9 +91,9 @@ def show_loss_acc(history):
     plt.savefig(filename, dpi=100)
 
 def train(epochs):
-    # 开始训练，记录开始时间
+    # 开始训练
     begin_time = time()
-    train_ds, val_ds, class_names = data_load("../../fruit/train",
+    train_ds, val_ds, class_names = data_load("../fruit/train",
                                               "../fruit/val", 224, 224, 16)
     print(class_names)
     # 加载模型
@@ -105,8 +105,7 @@ def train(epochs):
     end_time = time()
     run_time = end_time - begin_time
     print('该循环程序运行时间：', run_time, "s")  # 该循环程序运行时间： 1.4201874732
-    # 绘制模型训练过程图
-    show_loss_acc(history)
+    showAccuracyAndLoss(history)
 
 
 if __name__ == '__main__':

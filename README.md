@@ -118,7 +118,7 @@ def model_load(IMG_SHAPE=(223, 224, 3), class_num=15):
 #### 2.2 MobileNetV2结构
 
 &emsp;MobileNet的基本单元是深度可分离卷积，实质是一种可分解卷积操作。可分为两个更小的操作：Depthwise convolution和Pointwise convoluton。
-标准的卷积核Dk*Dk是对与输入通道数M进行卷积操作。
+标准的卷积核Dk*Dk*M是对与输入通道数M进行卷积操作,N个卷积核。
 
 ![](PhotoForReadme/2.png)
 
@@ -171,7 +171,7 @@ def model_load(IMG_SHAPE=(224, 224, 3), class_num=15):
 <a id="31"></a>
 #### 1、	CNN训练过程及分析
 
-&emsp;除了定义数据集加载函数data_load和模型构建函数model_load外，还定义了show_loss_acc用来从history中提取模型训练集和验证集的准确率和误差损失，绘制训练过程中的loss和accuracy曲线图。
+&emsp;除了定义数据集加载函数data_load和模型构建函数model_load外，还定义了showAccuracyAndLoss(history)用来从history中提取模型训练集和验证集的准确率和误差损失，绘制训练过程中的loss和accuracy曲线图。
 
 ```python
 def data_load(data_dir, test_data_dir, img_height, img_width, batch_size)
@@ -181,7 +181,7 @@ def show_loss_acc(history)
 
 &emsp;在train(epochs)函数中调用history = model.fit(train_ds, validation_data=val_ds, epochs=epochs)进行训练，通过model.save("models/cnn_fv.h5")保存为模型文件。
 
-&emsp;定义了test_cnn()函数通过保存的模型文件对验证集进行验证，并绘制heatmap热力图。
+&emsp;定义了test_cnn()函数通过保存的模型文件对验证集进行验证，并通过showHM绘制heatmap热力图。
 &emsp;先使用sgd随机梯度下降优化器和categorical_crossentropy
 多分类交叉熵损失函数，epcoh=10进行训练，默认学习率0.01。
 
@@ -229,6 +229,27 @@ def show_loss_acc(history)
 &emsp;排查原因，首要原因是数据集的问题，对于像荔枝的数据集，在我们这个模型中预测出来的草莓的概率反而比荔枝更高。查看数据集图片发现这个数据集样本量不够大，荔枝只有156张图片，而且有剥开皮的、还没熟透绿色的、照片调色过艳的，类型过杂图片过少造成预测准确率低。
 
 ![](PhotoForReadme/10.png)
+&emsp;利用tensorFlow的ImageDataGenerator对训练集进行数据增强，加上原来的数据集部分，扩大为原来的5倍。
+```python
+datagen = ImageDataGenerator(
+    rotation_range=40,  # 随机旋转角度范围
+    width_shift_range=0.2,  # 随机水平平移范围(相对于图片宽度)
+    height_shift_range=0.2,  # 随机竖直平移范围(相对于图片高度)
+    shear_range=0.2,  # 随机裁剪
+    zoom_range=0.2,  # 随机缩放
+    horizontal_flip=True,  # 随机水平翻转
+    vertical_flip=True,  # 随机竖直翻转
+    fill_mode='nearest')  # 填充模式
+```
+&emsp;使用最早定义的CNN网络，epoch=15，sgd优化器和多分类交叉熵损失函数，训练结果如下：
+![img_2.png](PhotoForReadme/img_2.png)
+
+&emsp;使用原始的测试集测试后的热力图：
+![img.png](PhotoForReadme/img.png)
+
+&emsp;对数据增强后的测试集进行测试，测试结果热力图：
+![img_1.png](PhotoForReadme/img_1.png)
+
 <a id="32"></a>
 #### 2、	MobileNetV2训练过程及分析
 &emsp;使用adam优化器和sgd随机梯度下降优化器和categorical_cr ossentropy多分类交叉熵损失函数，默认学习率0.01，epoch=10进行训练。
@@ -236,8 +257,15 @@ def show_loss_acc(history)
 ![](FruitRecognition/resultsPng/results_mobilenet.png)
 
 &emsp;可以观察到在第6轮训练时，训练集上的准确率就已经达到了100%，而且测试集上的准确率也有90%以上，交叉熵损失达到0.5以下。训练效果非常好。
-
+&emsp;对原始测试集测试热力图如下：
 ![](FruitRecognition/resultsPng/heatmap_mobilenet.png)
+
+&emsp;对数据增强后的测试集，测试热力图如下：
+![img.png](PhotoForReadme/img3.png)
+
+&emsp;相比原测试集，准确率只有几类水果稍微下降。
+
+
 
 &emsp;由此得知，相比较于从头开始训练一个自己的CNN模型，利用迁移学习使用预训练过的MobileNetV2作为主干，利用它在ImageNet上学到的特征，在此基础上进行微调适应自己的数据集，可以显著降低训练时间和成本，大大提高准确度。
 <a id="4"></a>
@@ -245,6 +273,6 @@ def show_loss_acc(history)
 
 &emsp;在本项目中着重探索了利用深度学习模型进行水果图像分类的方法。具体而言包括使用卷积神经网络（CNN）模型进行水果图片的分类和探索轻量级神经网络模型MobileNetV2在水果图像分类中的应用。
 
-&emsp;在第一项任务中，使用TensorFlow构建了一个简单的CNN模型，并通过调整模型参数来提高准确率。在实验过程中发现由于数据集的问题，训练结果并不理想，测试集上的准确率低于预期，同时出现了过拟合的情况。针对这个问题，从优化器、学习率和训练轮次等方面入手，对模型进行了改进和调整。但是由于数据集本身的局限性，改进效果并不显著。因此使用迁移学习中的MobileNetV2模型进行图像分类。
+&emsp;在第一项任务中，使用TensorFlow构建了一个简单的CNN模型，并通过调整模型参数来提高准确率。在实验过程中发现由于数据集的问题，训练结果并不理想，测试集上的准确率低于预期，同时出现了过拟合的情况。针对这个问题，从优化器、学习率和训练轮次等方面入手，对模型进行了改进和调整。但是由于数据集本身的局限性，改进效果并不显著。后续对数据集进行数据增强，效果相对右改善。因此使用迁移学习中的MobileNetV2模型进行图像分类。
 
 &emsp;在第二项任务中，使用预训练的MobileNetV2模型作为主干模型，并对其进行微调以适应自己的数据集。通过这种方法成功地提高了分类准确率。 迁移学习对于解决小规模数据集上的图像分类问题具有重要意义。
