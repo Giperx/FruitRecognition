@@ -1,13 +1,36 @@
 # FruitRecognition
-DeepLearning深度学习大作业，利用CNN和MobileNetV2搭建的水果识别模型。
+DeepLearning深度学习小项目，利用CNN和MobileNetV2搭建的水果识别模型。
 
 ---
 #### `Lab文件夹中有七个深度学习课程相关实验以及文档。`
 
 #### fruit为本次大作业使用的数据集。
 #### geneFruit为数据增强后的数据集。
-#### FruitRecognition为本次大作业相关代码及相关曲线热力图。
+#### FruitRecognition为本项目相关代码及相关曲线热力图。
 #### `PhotoForReadme为md文件的图片备份。`
+
+---
+
+项目使用conda环境进行训练，
+相关测试版本如下：
+
+| name       | version       |
+|------------|---------------|
+| python     | 3.7.3         |
+| tensorflow-cpu | 2.3.0         |
+
+---
+
+#### 环境复现：
+
+项目根目录下有`environment.yml` 为虚拟环境导出的配置文件
+
+将`yml`文件移动到conda相关文件目录下
+
+进入Anaconda Prompt任意环境下运行
+```conda env create -f environment.yml```
+
+自动安装相关依赖，复现虚拟环境。
 
 ---
 [一、概述](#1) <br>
