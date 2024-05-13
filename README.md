@@ -266,12 +266,15 @@ datagen = ImageDataGenerator(
     fill_mode='nearest')  # 填充模式
 ```
 &emsp;使用最早定义的CNN网络，epoch=15，sgd优化器和多分类交叉熵损失函数，训练结果如下：
+
 ![img_2.png](PhotoForReadme/img_2.png)
 
 &emsp;使用原始的测试集测试后的热力图：
+
 ![img.png](PhotoForReadme/img.png)
 
 &emsp;对数据增强后的测试集进行测试，测试结果热力图：
+
 ![img_1.png](PhotoForReadme/img_1.png)
 
 <a id="32"></a>
@@ -282,9 +285,11 @@ datagen = ImageDataGenerator(
 
 &emsp;可以观察到在第6轮训练时，训练集上的准确率就已经达到了100%，而且测试集上的准确率也有90%以上，交叉熵损失达到0.5以下。训练效果非常好。
 &emsp;对原始测试集测试热力图如下：
+
 ![](FruitRecognition/resultsPng/heatmap_mobilenet.png)
 
 &emsp;对数据增强后的测试集，测试热力图如下：
+
 ![img.png](PhotoForReadme/img3.png)
 
 &emsp;相比原测试集，准确率只有几类水果稍微下降。
