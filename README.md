@@ -6,7 +6,6 @@ DeepLearning深度学习小项目，利用CNN和MobileNetV2搭建的水果识别
 #### fruit为本次大作业使用的数据集。
 #### geneFruit为数据增强后的数据集。
 #### FruitRecognition为本项目相关代码及相关曲线热力图。
-#### `PhotoForReadme为md文件的图片备份。`
 
 ---
 
